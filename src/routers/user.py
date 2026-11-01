@@ -15,7 +15,7 @@ from services.user import (
 )
 from schemas.user import (
     UserCreateRequest,
-    UserResponse,
+    UserSchema,
     UserPaginatedResponse,
     UserUpdateRequest,
     UserRegisterResponse,
@@ -33,7 +33,7 @@ async def register_user(
     data: UserCreateRequest,
     users_service: UsersService = Depends(get_users_service),
     auth_service: AuthService = Depends(get_auth_service),
-):
+) -> UserRegisterResponse:
     try:
         new_user = await users_service.create(data)
         access_token, session_id = await auth_service.create_and_store_access_token(
@@ -46,21 +46,21 @@ async def register_user(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=UserSchema)
 async def me(
-    current_user: Annotated[UserResponse, Depends(get_current_user)],
-) -> UserResponse:
+    current_user: Annotated[UserSchema, Depends(get_current_user)],
+) -> UserSchema:
     return current_user
 
 
 @router.get("/", response_model=UserPaginatedResponse)
 async def get_users(
-    current_user: Annotated[UserResponse, Depends(get_current_user)],
+    current_user: Annotated[UserSchema, Depends(get_current_user)],
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=100),
     search: str | None = Query(None),
     users_service: UsersService = Depends(get_users_service),
-):
+) -> UserPaginatedResponse:
     items, total = await users_service.get_list(page, per_page, search)
     return UserPaginatedResponse(
         total=total,
@@ -70,12 +70,12 @@ async def get_users(
     )
 
 
-@router.get("/{id}", response_model=UserResponse)
+@router.get("/{id}", response_model=UserSchema)
 async def get_user(
-    current_user: Annotated[UserResponse, Depends(get_current_user)],
+    current_user: Annotated[UserSchema, Depends(get_current_user)],
     id: uuid.UUID,
     users_service: UsersService = Depends(get_users_service),
-):
+) -> UserSchema:
     if current_user.id != id and not current_user.is_superuser:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Нет прав.")
     try:
@@ -84,24 +84,24 @@ async def get_user(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
-@router.post("/", response_model=UserResponse)
+@router.post("/", response_model=UserSchema)
 async def create_user(
     data: UserCreateRequest,
     users_service: UsersService = Depends(get_users_service),
-):
+) -> UserSchema:
     try:
         return await users_service.create(data)
     except UserAlreadyExistsError as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
 
-@router.patch("/{id}", response_model=UserResponse)
+@router.patch("/{id}", response_model=UserSchema)
 async def update_user(
-    current_user: Annotated[UserResponse, Depends(get_current_user)],
+    current_user: Annotated[UserSchema, Depends(get_current_user)],
     id: uuid.UUID,
     data: UserUpdateRequest,
     users_service: UsersService = Depends(get_users_service),
-):
+) -> UserSchema:
     is_self = current_user.id == id
     if not is_self and not current_user.is_superuser:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Нет прав.")
@@ -124,10 +124,10 @@ async def update_user(
 
 @router.delete("/{id}", response_model=None)
 async def delete_user(
-    current_user: Annotated[UserResponse, Depends(get_current_user)],
+    current_user: Annotated[UserSchema, Depends(get_current_user)],
     id: uuid.UUID,
     users_service: UsersService = Depends(get_users_service),
-):
+) -> None:
     if current_user.id != id and not current_user.is_superuser:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Нет прав.")
     try:

@@ -1,5 +1,7 @@
 # from contextlib import asynccontextmanager
 
+import uvicorn
+from typing import Dict
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -21,7 +23,7 @@ origins = [
 ]
 
 app = FastAPI(
-    title="FastMessenger API",
+    title="Govor API",
     # lifespan=lifespan,
     # root_path="/api/v1/crm",
     # docs_url="/docs",
@@ -43,8 +45,11 @@ router = APIRouter()
 
 
 @router.get("/health")
-async def health():
+async def health() -> Dict:
     return {"status": "ok"}
 
 
 app.include_router(router)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
