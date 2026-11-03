@@ -21,13 +21,13 @@ class DBSettings(BaseSettings):
             f"{self.db_password.get_secret_value()}@"
             f"{self.db_host}:{self.db_port}/{self.db_name}"
         )
-    
+
     @property
     def test_db_url(self):
         return (
             f"postgresql+psycopg2://{self.db_user}:"
             f"{self.db_password.get_secret_value()}@"
-            f"{self.db_host}:{self.db_port}/db_for_testing"
+            f"{self.db_host}:{self.db_port}/postgres"
         )
 
 
