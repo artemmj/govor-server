@@ -24,8 +24,6 @@ class UserDAO(BaseDAO[User]):
             "updated_at": user.updated_at,
             "is_active": user.is_active,
             "is_superuser": user.is_superuser,
-            "is_banned": user.is_banned,
-            "is_verified": user.is_verified,
             "password_hash": user.password_hash,
         }
 

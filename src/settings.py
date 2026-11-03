@@ -56,7 +56,10 @@ class RedisSettings(BaseSettings):
 
 class Settings(BaseSettings):
     debug: bool = Field(default=True, alias="DEBUG")
-    secret_key: SecretStr = Field(default="", alias="SECRET_KEY")
+    secret_key: SecretStr = Field(
+        default="dev-secret-key-for-local-tests-1234567890",
+        alias="SECRET_KEY",
+    )
     access_token_expire: int = Field(default=120, alias="ACCESS_TOKEN_EXPIRE")
 
     db_settings: DBSettings = DBSettings()

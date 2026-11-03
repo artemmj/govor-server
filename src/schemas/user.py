@@ -12,10 +12,8 @@ class UserSchema(BaseModel):
     phone: str
     email: Optional[str] = None
 
-    is_active: bool
-    is_banned: bool
     is_superuser: bool
-    is_verified: bool
+    is_active: bool
 
     created_at: datetime.datetime
     updated_at: datetime.datetime
@@ -45,10 +43,8 @@ class UserUpdateRequest(BaseModel):
     email: Optional[str] = None
     phone: Optional[str] = None
 
-    is_active: Optional[bool] = None
-    is_banned: Optional[bool] = None
     is_superuser: Optional[bool] = None
-    is_verified: Optional[bool] = None
+    is_active: Optional[bool] = None
 
     @field_validator("phone", mode="before", check_fields=False)
     @classmethod

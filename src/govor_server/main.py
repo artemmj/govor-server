@@ -2,8 +2,16 @@
 
 import uvicorn
 from typing import Dict
-from fastapi import FastAPI, APIRouter
+
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from sqlalchemy.orm import Session
+
+from dependencies.db import db_dependency
+from handlers.auth import AuthHandler
+from models.user import User
+from routers.auth import router as auth_router
 
 
 # @asynccontextmanager
@@ -50,6 +58,7 @@ async def health() -> Dict:
 
 
 app.include_router(router)
+app.include_router(auth_router)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

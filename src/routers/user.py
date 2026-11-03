@@ -105,7 +105,7 @@ async def update_user(
     is_self = current_user.id == id
     if not is_self and not current_user.is_superuser:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Нет прав.")
-    privileged_fields = {"is_active", "is_banned", "is_superuser", "is_verified"}
+    privileged_fields = {"is_active", "is_superuser"}
 
     if not current_user.is_superuser and privileged_fields.intersection(
         data.model_fields_set

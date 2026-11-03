@@ -45,9 +45,9 @@ class AuthService:
         ):
             raise WrongEmailPasswordException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Wrong email or password",
+                detail="Wrong phone or password",
             )
-        if not exist_user["is_active"] or exist_user["is_banned"]:
+        if not exist_user["is_active"]:
             raise AccountDisabledOrBannedException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Account is disabled or banned",
